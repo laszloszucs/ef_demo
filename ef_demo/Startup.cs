@@ -52,7 +52,7 @@ namespace ef_demo
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseVueCli(npmScript: "serve");
+                    spa.UseVueCli(npmScript: "dev");
                 }
             });
         }
