@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ef_demo.ApiModels;
-using ef_demo.Infrastructure.Core;
+using ef_demo.Core.Entities;
 
 namespace ef_demo.MapperProfiles
 {
@@ -8,8 +8,9 @@ namespace ef_demo.MapperProfiles
     {
         public MappingProfile()
         {
-            CreateMap<Blog, BlogDTO>().ReverseMap();
-            CreateMap<Post, PostDTO>().ReverseMap();
+            CreateMap<Blog, BlogDto>().ReverseMap();
+            CreateMap<Post, PostDto>().ReverseMap();
+            CreateMap<Blog, PostBlogDto>().ReverseMap();
         }
     }
 }

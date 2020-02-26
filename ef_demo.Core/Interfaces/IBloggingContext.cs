@@ -1,4 +1,5 @@
-﻿using ef_demo.Infrastructure.Core;
+﻿using System.Threading.Tasks;
+using ef_demo.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ef_demo.Core.Interfaces
@@ -8,8 +9,8 @@ namespace ef_demo.Core.Interfaces
         DbSet<Blog> Blogs { get; set; }
         DbSet<Post> Posts { get; set; }
 
-        void BeginTransaction();
-        void Commit();
-        void Rollback();
+        Task BeginTransactionAsync();
+        Task CommitAsync();
+        Task RollbackAsync();
     }
 }

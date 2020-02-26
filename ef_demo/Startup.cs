@@ -14,7 +14,7 @@ namespace ef_demo
 {
     public class Startup
     {
-        public static readonly ILoggerFactory EFLoggerFactory
+        public static readonly ILoggerFactory EfLoggerFactory
             = LoggerFactory.Create(builder => { builder.AddFilter((category, level) =>
                     category == DbLoggerCategory.Database.Command.Name
                     && level == LogLevel.Information)
@@ -32,7 +32,7 @@ namespace ef_demo
         {
             services.AddDbContext<BloggingContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("BloggingDatabase"))
-                    .UseLoggerFactory(EFLoggerFactory)
+                    .UseLoggerFactory(EfLoggerFactory)
                     .EnableSensitiveDataLogging()
                     );
 
