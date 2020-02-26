@@ -1,14 +1,25 @@
+using ef_demo.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VueCliMiddleware;
+using AutoMapper;
+using ef_demo.MapperProfiles;
+using Microsoft.Extensions.Logging;
 
 namespace ef_demo
 {
     public class Startup
     {
+        public static readonly ILoggerFactory EFLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddFilter((category, level) =>
+                    category == DbLoggerCategory.Database.Command.Name
+                    && level == LogLevel.Information)
+                .AddConsole(); });
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -19,11 +30,19 @@ namespace ef_demo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<BloggingContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("BloggingDatabase"))
+                    .UseLoggerFactory(EFLoggerFactory)
+                    .EnableSensitiveDataLogging()
+                    );
+
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp";
             });
+
+            services.AddAutoMapper(typeof(MappingProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

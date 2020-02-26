@@ -1,10 +1,9 @@
-using ef_demo.Helpers;
-using ef_demo.Infrastructure.Core;
 using ef_demo.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace ef_demo
 {
@@ -12,7 +11,11 @@ namespace ef_demo
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            CreateDbIfNotExists(host);
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -20,25 +23,24 @@ namespace ef_demo
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-
-                    using var db = new BloggingContext();
-                    db.Database.EnsureDeleted();
-                    db.Database.EnsureCreated();
-                    if (!db.Blogs.Any())
-                    {
-                        var blogs = new List<Blog>();
-
-                        for (int i = 0; i < 100; i++)
-                        {
-                            blogs.Add(new Blog { 
-                                Url = $"http://{Randomizer.RandomString(6)}.com",
-                                Rating = Randomizer.RandomNumber(1, 5)
-                            });
-                        }
-
-                        db.Blogs.AddRange(blogs);
-                        db.SaveChanges();
-                    }
                 });
+
+        private static void CreateDbIfNotExists(IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            try
+            {
+                var context = services.GetRequiredService<BloggingContext>();
+                DbInitializer.Initialize(context);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred creating the DB.");
+                throw;
+            }
+        }
     }
 }
