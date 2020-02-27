@@ -46,7 +46,7 @@ namespace ef_demo.Controllers
                 return NotFound(new { Message = "Blog cannot be found" });
             }
 
-            return Ok(blog);
+            return Ok(_mapper.Map<BlogDto>(blog));
         }
 
         [HttpPost]

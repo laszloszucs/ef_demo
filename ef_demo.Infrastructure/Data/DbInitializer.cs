@@ -32,10 +32,8 @@ namespace ef_demo.Infrastructure.Data
 
             var posts = Builder<Post>.CreateListOfSize(100)
                 .All()
-                //.With(post => post.Blog = Pick<Blog>.RandomItemFrom(blogs))
+                .With(post => post.Blog = Pick<Blog>.RandomItemFrom(blogs))
                 .With(post => post.Id = 0)
-                .With(post => post.BlogId = null)
-                .With(post => post.Blog = null)
                 .With(post => post.Title = Faker.Lorem.GetFirstWord())
                 .With(post => post.Content = Faker.Lorem.Paragraph())
                 .Build();
